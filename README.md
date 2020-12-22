@@ -8,11 +8,11 @@ A random person name generator backed by a neural network.  The model is fully t
 * 50 hidden nodes (1 layer)
 * 27 output nodes
 
-#### Input nodes (Character embeddings)
+#### Input nodes (one hot encoding)
 Each node represents a character. The previous 3 characters (78 nodes) are given to the network to predict next characters (output).
 For the very first characters, all nodes are zeros. 
 
-#### Output nodes
+#### Output nodes (probability for each character)
 Each node represents a character and an end marker character. (26 + 1 nodes)
 Each node has a probability (weight) of the next character. (weights)
 One of the characters (nodes) will be randomly selected.
@@ -28,11 +28,13 @@ The higher the probability is for the character, the more likely it is to be sel
 * During the testing process, the accuracy of predicting the correct next probable character is over 95%.
 * At any point, if the predicted char is the begin/end marker character, the process ends and the word is returned.
 
-#### Final Checks
-* The name that contains no vowel letter (aeiou) will be discarded; a new name will be generated. (ex. Zkct, Adn)
-* The name that contains more than 2 repeated letters will also be discarded. (ex. Nikkken, Mammm)
-* Each name type has a fixed range based on the sample data (Female: 3-10 chars, Male: 2-11 chars, Surname: 2-11 chars)  
-* A regeneration rate is approximately 3%.
+#### Validation
+* The name must contain at least one vowel letter (aeiou)
+* The name must not contain 3 or more repeated letters
+* The name length must be within a pre-defined fixed range (Female: 3-10 chars, Male: 2-11 chars, Surname: 2-11 chars)  
+* The name must start with a known prefix (2 chars) and end with a known suffix (2 chars) 
+
+(Failure rate: approximately 3%)
 
 
 ### NeuralNames.GetRandomFullName()
@@ -45,7 +47,7 @@ for (int i = 0; i < 3; i++)
 }
 ```
 
-### new NeuralNames(Random).NextFullName()
+### new NeuralNames(new System.Random(seed)).NextFullName()
 You can create an instance with a seed, which produces the same set of names, guaraneteed.
 ``` csharp
 var random = new Random(-5);  // Seeding provides the same values
@@ -53,6 +55,6 @@ var nameGenerator = new NeuralNames(random);
 for (int i = 0; i < 3; i++)
 {
     var name = nameGenerator.NextFullName();
-    Console.WriteLine(name);  // Cames Weath, Hay Reed, Charlee Eclaird (guaranteed)
+    Console.WriteLine(name);  // guaranteed result
 }
 ```
